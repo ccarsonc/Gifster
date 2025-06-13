@@ -43,7 +43,7 @@ install git
 brew install git
 ```
 
-3. Create your project directory
+4. Create your project directory
 
 ```bash
 
@@ -53,14 +53,14 @@ cd /Users/YOUR_USERNAME/xcodeprojects/
 
 ```
 
-4. Clone the repository into your project folder:
+5. Clone the repository into your project folder:
 
 ```bash
 
 git clone https://github.com/ccarsonc/Gifster.git
 
 ```
-5. Switch to the downloaded Gifster directory and open the XCode project
+6. Switch to the downloaded Gifster directory and open the XCode project
 
 ```bash
 
