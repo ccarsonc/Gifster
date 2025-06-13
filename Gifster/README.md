@@ -1,5 +1,7 @@
 # Gifster for macOS
 
+![App Logo](Assets.xcassets/gifsterlogo.imageset/gifsterlogo.png)
+
 **Gifster** is a lightweight macOS application that allows users to create animated GIFs from selected image files. It's built entirely with SwiftUI and the native macOS SDK — no external dependencies required.
 
 ## Features
