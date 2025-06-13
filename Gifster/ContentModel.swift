@@ -14,49 +14,15 @@ final class ContentModel: NSObject, ObservableObject {
     static let shared = ContentModel()
     private override init() {}
     
-    //@Published var imageURLs: [URL] = []
+    @Published var loopCount: Double = 0.0
+    @Published var frameDelay: Double = 0.2
     @Published var imageItems: [ImageItem] = []
     @Published var statusMessage: String = "No images selected"
-    
-    func createGIF(from urls: [URL]) {
-        let destinationURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Desktop/animated.gif")
-        
-        var destination: CGImageDestination?
-        
-        if #available(macOS 12.0, *) {
-            destination = CGImageDestinationCreateWithURL(destinationURL as CFURL, UTType.gif.identifier as CFString, urls.count, nil)
-        } else {
-            destination = CGImageDestinationCreateWithURL(destinationURL as CFURL, kUTTypeGIF, urls.count, nil)
-        }
-        let frameDelay = 0.2
-        let gifProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFLoopCount: 0]] as CFDictionary
-        let frameProperties = [kCGImagePropertyGIFDictionary: [kCGImagePropertyGIFDelayTime: frameDelay]] as CFDictionary
-        
-        guard let destination else {
-            statusMessage = "Failed to create GIF destination"
-            return
-        }
-        CGImageDestinationSetProperties(destination, gifProperties)
-        
-        for url in urls {
-            if let image = NSImage(contentsOf: url),
-               let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) {
-                CGImageDestinationAddImage(destination, cgImage, frameProperties)
-            }
-        }
-        
-        if CGImageDestinationFinalize(destination) {
-            statusMessage = "GIF saved to Desktop!"
-        } else {
-            statusMessage = "Failed to save GIF"
-        }
-    }
     
     func saveGIF(to items: [ImageItem]) {
         let savePanel = NSSavePanel()
         savePanel.allowedContentTypes = [UTType.gif]
-        savePanel.nameFieldStringValue = "animated.gif"
+        savePanel.nameFieldStringValue = ".gif"
         savePanel.begin { response in
             if response == .OK, let destinationURL = savePanel.url {
                 self.generateGIF(from: items.map { $0.url }, to: destinationURL)
@@ -72,10 +38,9 @@ final class ContentModel: NSObject, ObservableObject {
             return
         }
         
-        let frameDelay = 0.2
         let gifProperties = [
             kCGImagePropertyGIFDictionary: [
-                kCGImagePropertyGIFLoopCount: 0
+                kCGImagePropertyGIFLoopCount: loopCount
             ]
         ] as CFDictionary
         

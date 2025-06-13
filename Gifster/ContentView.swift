@@ -15,19 +15,20 @@ struct ContentView: View {
     @State private var draggingItem: ImageItem?
     
     var body: some View {
-        VStack(spacing: 20) {
+        ScrollView(Axis.Set.vertical) {
+        VStack(alignment: HorizontalAlignment.center, spacing: 20) {
             
             Image("gifsterlogo")
                 .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: 150)
-                .padding(.top, 20)
-                .edgesIgnoringSafeArea(.horizontal)
+                .frame(width: 450, height: 150)
+                .padding(.top, 5)
+                .padding(.bottom)
             
             Button("Choose Images") {
                 selectImages()
             }
             .padding(.horizontal)
+            .padding(.top)
             
             if !contentModel.imageItems.isEmpty {
                 ScrollView(.horizontal) {
@@ -62,11 +63,96 @@ struct ContentView: View {
                             .onDrop(of: [.text], delegate: ImageDropDelegate(item: item, items: $contentModel.imageItems, draggingItem: $draggingItem))
                         }
                     }
+                    .padding()
+                    .background(Color.gray.opacity(0.2).clipShape(RoundedRectangle(cornerRadius: 20)))
                     .padding(.horizontal)
                 }
                 .frame(height: 120)
                 .frame(height: 120)
             }
+            
+            VStack(alignment: HorizontalAlignment.center, spacing: 10) {
+                
+                VStack {
+                    HStack {
+                        if (contentModel.frameDelay == 0.2) {
+                            
+                            Text("0.2 - Default")
+                            
+                        } else {
+                            
+                            Text(contentModel.frameDelay.description)
+                            
+                            Button {
+                                contentModel.frameDelay = 0.2
+                            } label: {
+                                Text("Reset")
+                            }
+                        }
+                        
+                        InfoButton(title: "Frame Delay Information", message: "Setting the frame delay controls the amount of time in ms after each image. Higher values = longer GIFs.")
+                            .padding(.vertical)
+                    }
+                    
+                    HStack {
+                        
+                        Text("Frame Delay")
+                            .padding(.vertical)
+                        
+                        Slider(
+                            value: Binding(
+                                get: { contentModel.frameDelay },
+                                set: { contentModel.frameDelay = ($0 * 10).rounded() / 10 }
+                            ),
+                            in: 0...5,
+                            step: 0.2
+                        )
+                    }
+                }
+                
+                VStack {
+                    HStack {
+                        if (contentModel.loopCount == 0) {
+                            Text("0 - Default (infinite)")
+                        } else {
+                            
+                            Text(contentModel.loopCount.description)
+                            
+                            Button {
+                                contentModel.loopCount = 0
+                            } label: {
+                                Text("Reset")
+                            }
+                        }
+                        
+                        InfoButton(title: "Loop Information", message: "Setting the amount of loops controls how many times you want your gif to play. Use 0 for infinite loop.")
+                            .padding(.vertical)
+                    }
+                    
+                    HStack {
+                        
+                        Text("Loops")
+                        
+                        Slider(
+                            value: Binding(
+                                get: { contentModel.loopCount },
+                                set: { contentModel.loopCount = $0.rounded() }
+                            ),
+                            in: 0...10,
+                            step: 1.0
+                        )
+                    }
+                }
+                
+                Text(contentModel.statusMessage)
+                    .font(.footnote)
+                    .multilineTextAlignment(.center)
+                    .padding()
+                
+            }
+            .padding()
+            .background(Color.gray.opacity(0.2).clipShape(RoundedRectangle(cornerRadius: 20)))
+            .padding(.top, 50)
             
             Button("Create GIF") {
                 contentModel.saveGIF(to: contentModel.imageItems)
@@ -74,14 +160,11 @@ struct ContentView: View {
             .disabled(contentModel.imageItems.isEmpty)
             .padding(.horizontal)
             
-            Text(contentModel.statusMessage)
-                .font(.footnote)
-                .multilineTextAlignment(.center)
-                .padding()
         }
-        .frame(minWidth: 600, minHeight: 500)
+        .frame(minWidth: 600, minHeight: 800)
         .padding()
     }
+}
     
     private func selectImages() {
         let panel = NSOpenPanel()
