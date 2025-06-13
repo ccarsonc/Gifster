@@ -31,6 +31,18 @@ XCode - https://apps.apple.com/us/app/xcode/id497799835?mt=12
 
 2. Open terminal
 
+3. Make sure you have git installed (also homebrew to install git)
+
+install homebrew
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+install git
+
+```bash
+brew install git
+```
+
 3. Create your project directory
 
 ```bash
